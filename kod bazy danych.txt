@@ -1,0 +1,186 @@
+CREATE DATABASE SerwisKomputerowy
+USE Serwis Komputerowy
+
+CREATE TABLE klient (
+klient_id INT IDENTITY(1,1) NOT NULL,
+imie VARCHAR(30),
+nazwisko VARCHAR(30),
+telefon INT(9),
+email VARCHAR(50),
+PRIMARY KEY (klient_id)
+)
+
+CREATE TABLE kategoria_urzadzenia (
+kategoria_id INT IDENTITY(1,1) NOT NULL,
+kategoria_nazwa VARCHAR(30),
+PRIMARY KEY (kategoria_id)
+)
+
+CREATE TABLE marka (
+marka_id INT IDENTITY(1,1) NOT NULL,
+marka_nazwa VARCHAR(30),
+URL_producenta VARCHAR(50),
+PRIMARY KEY (marka_id)
+)
+
+CREATE TABLE model (
+model_id INT IDENTITY(1,1) NOT NULL,
+model_nazwa VARCHAR(30),
+kategoria_id INT NOT NULL,
+marka_id INT NOT NULL,
+PRIMARY KEY (model_id),
+FOREIGN KEY (marka_id) REFERENCES marka (marka_id),
+FOREIGN KEY (kategoria_id) REFERENCES kategoria_urzadzenia (kategoria_id)
+)
+
+CREATE TABLE urzadzenie (
+urzadzenie_id INT IDENTITY(1,1) NOT NULL,
+nazwa VARCHAR(30),
+numer_seryjny VARCHAR(45),
+opis VARCHAR(200),
+model_id INT NOT NULL,
+PRIMARY KEY (urzadzenie_id),
+FOREIGN KEY (model_id) REFERENCES model (model_id)
+)
+
+CREATE TABLE pracownik (
+pracownik_id INT IDENTITY(1,1) NOT NULL,
+imie VARCHAR(30),
+nazwisko VARCHAR(45),
+telefon  INT(9),
+email VARCHAR(50),
+login VARCHAR(30),
+haslo VARCHAR(30),
+PRIMARY KEY (pracownik_id),
+)
+
+CREATE TABLE zlecenie (
+zlecenie_id INT IDENTITY(1,1) NOT NULL,
+opis_zlecenia VARCHAR(400),
+data_zlozenia DATE,
+data_wykonania DATE,
+status_zlecenia VARCHAR(30),
+klient_id INT NOT NULL,
+urzadzenie_id INT NOT NULL,
+PRIMARY KEY (zlecenie_id),
+FOREIGN KEY (klient_id) REFERENCES klient (klient_id),
+FOREIGN KEY (urzadzenie_id) REFERENCES urzadzenie (urzadzenie_id)
+)
+
+CREATE TABLE naprawa (
+naprawa_id INT IDENTITY(1,1) NOT NULL,
+naprawa_nazwa VARCHAR(50),
+opis_naprawy VARCHAR(400),
+naprawa_data DATE,
+koszt DECIMAL(5,2),
+pracownik_id INT NOT NULL,
+zlecenie_id INT NOT NULL,
+PRIMARY KEY (naprawa_id),
+FOREIGN KEY (pracownik_id) REFERENCES pracownik (pracownik_id),
+FOREIGN KEY (zlecenie_id) REFERENCES zlecenie (zlecenie_id)
+)
+
+CREATE TABLE zamowienie (
+zamowienie_id INT IDENTITY(1,1) NOT NULL,
+zamowienie_data DATE NOT NULL,
+koszt_calkowity DECIMAL(5,2) NOT NULL,
+pracownik_id INT NOT NULL,
+zlecenie_id INT NOT NULL,
+PRIMARY KEY (zamowienie_id),
+FOREIGN KEY (pracownik_id) REFERENCES pracownik (pracownik_id),
+FOREIGN KEY (zlecenie_id) REFERENCES zlecenie (zlecenie_id)
+)
+
+CREATE TABLE zamowienie_szczegoly (
+szczegoly_id INT IDENTITY(1,1) NOT NULL,
+nazwa VARCHAR(30),
+ilosc INT NOT NULL,
+koszt_jednostkowy DECIMAL(5,2),
+zamowienie_id INT NOT NULL,
+PRIMARY KEY (szczegoly_id),
+FOREIGN KEY (zamowienie_id) REFERENCES zamowienie (zamowienie_id)
+)
+
+CREATE TABLE cennik(
+cennik_id INT IDENTITY(1,1) NOT NULL,
+nazwa VARCHAR(50),
+cena DECIMAL(5,2)
+PRIMARY KEY (cennik_id));
+
+--------------------------------------------------------------------------------------------------
+
+insert into klient values('Michał', 'Bojarczuk', '111444777', 'kalesony@sony.pl');
+insert into klient values('Tomasz', 'Marciniak', '13243546', 'stringi@zDrutu.uk');
+insert into klient values('Jakub', 'Kaczmarczyk', '222555888', 'jakubXxX@gmail.com');
+insert into klient values('Adnżej', 'Dadudeł', '111111111', 'andrzej@rysuje.pis');
+insert into klient values('Wojciech', 'Gajewski', '123456789', 'wojtek@pokemon.de');
+insert into klient values('Hideo', 'Kojima', '987654321', 'metalgearsolid@stranding.jp');
+insert into klient values('Hidetaka', 'Miyazaki', '111222333', 'fromsoftware@darksouls.bb');
+insert into klient values('Rick', 'Sanchez', '444555666', 'morty@c137.us');
+insert into klient values('Riolu', 'Kobayashi', '777888999', 'malysz@gurom.ski');
+insert into klient values('Arthur', 'Pendragon', '147258369', 'kawasumi@ayako.ex');
+
+insert into kategoria_urzadzenia values('Laptop');
+insert into kategoria_urzadzenia values('Ultrabook');
+insert into kategoria_urzadzenia values('Komputer stacjonarny');
+insert into kategoria_urzadzenia values('Tablet');
+insert into kategoria_urzadzenia values('Serwer');
+insert into kategoria_urzadzenia values('Monitor');
+insert into kategoria_urzadzenia values('Drukarka');
+insert into kategoria_urzadzenia values('Mysz');
+insert into kategoria_urzadzenia values('Klawiatura');
+insert into kategoria_urzadzenia values('Konsola');
+
+insert into marka values('HP','https://www.hp.com/pl-pl');
+insert into marka values('Dell','https://www.dell.com/pl-pl');
+insert into marka values('Lenovo','https://www.dell.com/pl-pl');
+insert into marka values('Acer','https://www.acer.com/pl-pl');
+insert into marka values('Asus','https://www.asus.com/pl');
+insert into marka values('MSI','https://pl.msi.com');
+insert into marka values('Toshiba','https://www.toshiba.pl');
+insert into marka values('Gigabyte','https://www.gigabyte.pl');
+insert into marka values('Apple','https://www.apple.com/pl');
+
+insert into pracownik values ('Naruto', 'Uzumaki', '696808696', 'rasengan@ninja.wind', 'naruto69', 'kissSasuke1');
+insert into pracownik values ('Subaru', 'Natsuki', '000000000', 'natsuki@lugunica.dr', 'LittleSuu', 'ReturnByDeath');
+insert into pracownik values ('Shino', 'Asada', '145256325', 'sniper1@ggo.jp', 'Sinonon', 'Hecate2');
+insert into pracownik values ('Yuu', 'Ishigami', '985874785', 'ishigami@company.com', 'Yukun', 'MikoForLife');
+insert into pracownik values ('Nifuji', 'Hirotaka', '321654987', 'stay@home.work', 'HeroHiro', 'FGO/JP');
+insert into pracownik values ('Rin', 'Tohsaka', '658654652', 'gandr@crystal.to', 'SaberMaster', 'StrongestMaster');
+insert into pracownik values ('Lalatina', 'Dustiness', '321987841', 'lala@ford.ise', 'Darkness', 'MasoLoveXXX');
+insert into pracownik values ('Joseph', 'Joestar', '666666666', 'nowyou@will.say', 'LisaLisa', 'PurpleHermit53');
+insert into pracownik values ('Hitohito', 'Tadano', '852743951', 'communication@chad.ko', 'NinNin', 'AverageOne');
+insert into pracownik values ('Sakuta', 'Azusagawa', '902737050', 'azusagawa@rabbit.ms', 'AzuSaku', 'BunnyGirlsRule34');
+
+insert into model values ('Nitro', 1 , 4 );
+insert into model values ('Inspiron', 3 , 2 );
+insert into model values ('ThinkPad', 2 , 3 );
+insert into model values ('PowerEdge', 5 , 2 );
+insert into model values ('ROG Chakram', 8 , 5 );
+insert into model values ('GF76', 1 , 6 );
+insert into model values ('LaserJet', 7 , 1 );
+
+insert into urzadzenie values ('Acer Nitro 5', 'ABN0AS19779346H', 'Urządzenie na gwarancji z kilkoma pęknieciami w plastikowej obudowie. Brak klawiszy na klawiaturze: D, Y, Backspace oraz F11.', 1);
+insert into urzadzenie values ('HP LaserJet P1102', '2UF65AS#ABA', 'Lekko zakurzona i z widocznym wysypanym toner na podajnik kartek.', 7);
+insert into urzadzenie values ('Dell PowerEdge T150', '71M0XE001276', 'Z zewnątrz wygląda jak dopiero co kupiony.', 4);
+insert into zlecenie values ('Urządzenie zakurzone oraz wybrudzone czarnym tonerem. Żadanie wyczyszczenia na koszt klienta.', 
+'2021-02-01', '2021-02-03', 'Zakończone', 4, 2);
+insert into zlecenie values ('Widoczne ubytki w obudowie oraz brak klawiszy na klawiaturze: D, Y, Backspace, F11. 
+Żądanie: naprawa. Koszt: na koszt serwisu. Gwarancja: aktualna.', '2021-02-03', '2021-02-04', 'Anulowane', 6, 1);
+insert into zlecenie values ('Niedawno zakupiony serwer pokazuje brak jakiejkolwiek pamięci wbudowanej pomimo 256GB zapisanych w specyfikacji urządzenia. Żądanie: wykrycie i usunięcie problemu. Koszt: na koszt producenta. Gwarancja: aktualna.', '2021-02-05 ', '2021-02-09', 'Zakończone', 8, 3);
+
+insert into naprawa values ('Czyszczenie drukarki', 'Wyczyszczono głowicę, wałek oraz układ optyczny(soczewki i zwierciadła)', '2021-02-03', 230, 2, 1);
+insert into naprawa values ('Naprawa laptopa', 'Gwaranacja nie została uznana ze względu na widoczne uszkodzenia mechaniczne, które mogły powstać tylko poprzez błędne użytkowanie urządzenia przez osobę reklamującą.', '2021-02-04', 120, 7, 2);
+insert into naprawa values ('Diagnoza i naprawa serwera', 'Rozkręcono i sprawdzono dysk SSD w serwerze. Stwierdzono jego brak. Wstawiono nowy dysk.', '2021-02-09', 0, 4, 3);
+
+insert into zamowienie values ('2021-02-01', 147.6, 2, 1);
+insert into zamowienie values ('2021-02-03', 282.9, 7, 2);
+insert into zamowienie values ('2021-02-05', 0, 4, 3);
+
+insert into zamowienie_szczegoly values('Sprężone powietrze', 1, 23.99, 1);
+insert into zamowienie_szczegoly values('Obudowa laptopa', 1, 129.99, 2);
+insert into zamowienie_szczegoly values('Dysk SSD 256GB', 1, 89.99, 3);
+
+insert into cennik values('Instalacja systemu', 80), ('Instalacja sterowników', 30), ('Instalacja oprogramowania', 30), ('Instalacja aktualizacji systemowych', 30), 
+('Usuwanie wirusów', 50), ('Odzyskiwanie danych', 100), ('Wymiana matrycy', 175), ('Instalacja systemu', 80), 
+('Wymiana klawiatury', 90), ('Czyszczenie laptopa po zalaniu', 190), ('Naprawa płyty głównej', 135);
